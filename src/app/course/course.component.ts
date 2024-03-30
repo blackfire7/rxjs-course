@@ -11,9 +11,9 @@ import {
   concatMap,
   switchMap,
   withLatestFrom,
-  concatAll, shareReplay
+  concatAll, shareReplay, throttle, throttleTime
 } from 'rxjs/operators';
-import {merge, fromEvent, Observable, concat} from 'rxjs';
+import {merge, fromEvent, Observable, concat, interval} from 'rxjs';
 import {Lesson} from '../model/lesson';
 import {createHttpObservable} from "../common/util";
 
@@ -59,6 +59,8 @@ export class CourseComponent implements OnInit, AfterViewInit {
     // const initialLessons$ = this.loadLessons();
     //
     // this.lessons$ = concat(initialLessons$, searchLessons$);
+
+    // ORIGINAL SOLUTION
     this.lessons$ = fromEvent(this.input.nativeElement, 'keyup')
       .pipe(
         map((event: any) => event?.target?.value?.trim()),
@@ -67,6 +69,13 @@ export class CourseComponent implements OnInit, AfterViewInit {
         distinctUntilChanged(),
         switchMap(search => this.loadLessons(search))
       );
+
+    // THROTTLING CODE
+    // fromEvent(this.input.nativeElement, 'keyup')
+    //   .pipe(
+    //     map((event: any) => event?.target?.value?.trim()),
+    //     throttleTime(500),
+    //   ).subscribe(console.log);
 
   }
 
