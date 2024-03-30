@@ -25,16 +25,19 @@ export class HomeComponent implements OnInit {
       const http$ = createHttpObservable('/api/courses');
 
       const courses$: any = http$.pipe(
-        catchError(err => {
-          console.log(err)
-          return throwError(err)
-        }),
-        finalize(() => {
-          console.log('Finished Executed');
-        }),
+        // catchError(err => {
+        //   console.log(err)
+        //   return throwError(err)
+        // }),
+        // finalize(() => {
+        //   console.log('Finished Executed');
+        // }),
         tap(() => console.log('HTTP Request Completed')),
         map(res => Object.values(res['payload'])),
-        shareReplay()
+        shareReplay(),
+        retryWhen(error => error.pipe(
+          delayWhen(() => timer(2000))
+        ))
       );
 
       this.beginnerCourses$ = courses$.pipe(
