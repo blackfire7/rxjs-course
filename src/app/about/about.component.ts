@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import {Observable} from "rxjs";
+import {Component, OnInit} from '@angular/core';
+import {concat, of} from "rxjs";
 
 @Component({
   selector: 'about',
@@ -8,29 +8,21 @@ import {Observable} from "rxjs";
 })
 export class AboutComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
-    const http$ = new Observable(observer => {
-      observer.next(5);
-      observer.next(6);
-      observer.next(7);
 
-      fetch('/api/courses').then(response => {
-        return response.json();
-      }).then(body => {
-        observer.next(body);
-        observer.complete();
-      }).catch(error => {
-        observer.error(error);
-      });
-    });
+    const source1$ = of(1, 2, 3);
+    const source2$ = of(4, 5, 6);
+    const source3$ = of(7, 8, 9);
 
-    http$.subscribe({
-      next: courses => console.log(courses),
-      error: error => console.log(error),
-      complete: () => console.log('Completed'),
-    });
+    const result$ = concat(source1$, source2$, source3$);
+
+    result$.subscribe({
+      next: console.log
+    })
+
   }
 
 }
