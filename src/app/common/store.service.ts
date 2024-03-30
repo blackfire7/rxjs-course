@@ -50,6 +50,7 @@ export class Store {
         'content-type': 'application/json'
       }
     }));
-
   }
+
+  selectCourseById = (courseId: number) => this.courses$.pipe(map((courses: Course[]) => courses.find(course => course.id == courseId)));
 }
