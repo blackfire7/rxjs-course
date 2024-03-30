@@ -4,7 +4,7 @@ import {Course} from "../model/course";
 import {FormBuilder, Validators, FormGroup} from "@angular/forms";
 import * as moment from 'moment';
 import {fromEvent} from 'rxjs';
-import {concatMap, distinctUntilChanged, exhaustMap, filter, mergeMap} from 'rxjs/operators';
+import {concatMap, distinctUntilChanged, exhaustMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {fromPromise} from 'rxjs/internal-compatibility';
 
 @Component({
@@ -17,9 +17,9 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
     form: FormGroup;
     course:Course;
 
-    @ViewChild('saveButton', { static: true }) saveButton: ElementRef;
+    @ViewChild('saveButton', {read: ElementRef}) saveButton: ElementRef;
 
-    @ViewChild('searchInput', { static: true }) searchInput : ElementRef;
+    @ViewChild('searchInput') searchInput : ElementRef;
 
     constructor(
         private fb: FormBuilder,
@@ -61,6 +61,10 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
 
+      let obs$ = fromEvent(this.saveButton.nativeElement, 'click')
+        .pipe(
+          exhaustMap(() => this.saveCourse(this.form.value))
+        ).subscribe();
 
     }
 
